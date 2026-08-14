@@ -138,42 +138,4 @@ By default the server should now be running at `http://localhost:3000`.
 5. The Phishy-Check icon should now appear in your Chrome toolbar.
 6. If the extension needs the backend URL configured, make sure it points to `http://localhost:3000` (or wherever you're hosting the server) — check the extension's config/constants file.
 
-## How It Works
-
-1. **Capture** – The extension grabs the URL of the currently active tab using the Chrome Extensions API.
-2. **Submit** – It sends that URL to the backend's `/scan` endpoint.
-3. **Scan (VirusTotal)** – The backend submits the URL to VirusTotal and polls the analysis endpoint until the scan completes (since VirusTotal scans run asynchronously).
-4. **Scan (Google Safe Browsing)** – Once the VirusTotal scan finishes, the backend then checks the URL against Google's Safe Browsing threat lists (this step currently runs sequentially, after VirusTotal, not in parallel).
-5. **Score** – The risk engine combines both results into a single explainable score, weighing detections from each source.
-6. **Classify** – Based on the score, the URL is labeled `SAFE`, `SUSPICIOUS`, or `MALICIOUS`.
-7. **Display** – The verdict is sent back to the extension and shown in the popup.
-
-## Configuration
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `PORT` | Port the Express server listens on | No (defaults typically to 3000) |
-| `VIRUSTOTAL_API_KEY` | Your VirusTotal API key | Yes |
-| `GOOGLE_SAFE_BROWSING_API_KEY` | Your Google Safe Browsing API key | Yes |
-
-> Never commit your `.env` file or API keys to version control — `.gitignore` in this repo should already exclude it.
-
-## Testing
-
-The risk engine includes independent tests, separate from the API integrations (so scoring logic can be verified without live API calls). From the `server/` directory:
-
-```bash
-node testrisk.js
-```
-
-> Tip: you can wire this up as `npm test` by adding a `"test"` script to `server/package.json`:
-> ```json
-> "scripts": {
->   "test": "node testrisk.js"
-> }
-> ```
-> Then `npm test` will work too.
-
-
-
 No license file is currently specified in this repository. Consider adding one (e.g., MIT) if you plan to share or accept contributions.
