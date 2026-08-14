@@ -74,6 +74,16 @@ Phishy-Check/
 ├── .gitignore
 └── README.md
 ```
+## 📸 Screenshots
+
+### Chrome Extension
+
+<p align="center">
+  <img src="screenshots/phishy-url-detector.png" width="350" alt="Phishy URL Detector Chrome Extension">
+  <img src="screenshots/phishy-url-detector-result.png" width="350" alt="Phishy URL Detector Security Verdict">
+</p>
+
+The extension allows users to scan URLs and provides a security verdict based on results from **VirusTotal** and **Google Safe Browsing**.
 
 
 
