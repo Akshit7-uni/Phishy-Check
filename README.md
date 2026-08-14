@@ -8,18 +8,6 @@ Phishing links are one of the easiest ways attackers trick people into handing o
 
 The extension itself stays intentionally "dumb": it only captures the URL and displays the result. All the actual intelligence-gathering and API key usage happens server-side, so your VirusTotal / Google Safe Browsing credentials are never exposed in client-side extension code.
 
-## Features
-
-- 🔎 Detects the URL of the currently active Chrome tab.
-- 🧪 Scans URLs using the **VirusTotal API**.
-- 🛡️ Cross-checks URLs against **Google Safe Browsing**.
-- ⏳ Polls VirusTotal until the analysis job completes (VirusTotal scans are asynchronous).
-- 🧮 Combines signals from multiple sources into a single **explainable risk score**.
-- 🚦 Classifies each URL as `SAFE`, `SUSPICIOUS`, or `MALICIOUS`.
-- 🔐 Keeps all API keys on the backend — nothing sensitive ships inside the extension bundle.
-- 🖱️ Simple, lightweight popup UI for the verdict.
-- ✅ Includes independent tests for the risk-scoring engine.
-
 ## Architecture
 
 ```
