@@ -2,30 +2,6 @@
 
 Phishy-Check is a Chrome extension that analyzes the URL of your current browser tab and tells you whether it is **Safe**, **Suspicious**, or **Malicious** — backed by a Node.js/Express server that aggregates results from multiple threat-intelligence sources into a single, explainable risk verdict.
 
----
-
-## Table of Contents
-
-- Overview
-- Features
-- Screenshots
-- Architecture
-- Tech Stack
-- Project Structure
-- Getting Started
-  - Prerequisites
-  - 1. Clone the repo
-  - 2. Set up the backend server
-  - 3. Load the Chrome extension
-- How It Works
-- Configuration
-- Testing
-- Roadmap / Ideas
-- Contributing
-- License
-
----
-
 ## Overview
 
 Phishing links are one of the easiest ways attackers trick people into handing over credentials or installing malware. Phishy-Check gives you a one-click check on any page you're currently viewing: it grabs the active tab's URL, sends it to a backend risk engine, and returns a clear verdict — **SAFE**, **SUSPICIOUS**, or **MALICIOUS** — along with the signals that produced it.
@@ -93,15 +69,25 @@ VirusTotal API       Google Safe Browsing API
 ```
 Phishy-Check/
 ├── extension/
-│   └── [TODO: fill in actual files, e.g. manifest.json, popup.html, popup.js]
+│   ├── background.js
+│   ├── manifest.json
+│   ├── popup.css
+│   ├── popup.html
+│   └── popup.js
+│
 ├── server/
-│   ├── testrisk.js  # independent tests for the risk-scoring engine
-│   └── [TODO: fill in remaining actual files, e.g. server.js, riskEngine.js, .env]
+│   ├── server.js
+│   ├── riskEngine.js
+│   ├── safebrowsing.proto
+│   ├── testrisk.js
+│   ├── package.json
+│   └── package-lock.json
+│
 ├── .gitignore
 └── README.md
 ```
 
-> ⚠️ **Placeholder** — I couldn't crawl the `extension/` and `server/` folders directly (GitHub blocks automated access to file listings), so I only know `testrisk.js` exists from the test-command fix above. Send me the actual file list (e.g. paste `tree extension server` output) and I'll fill this in precisely.
+
 
 ## Getting Started
 
@@ -188,18 +174,6 @@ node testrisk.js
 > ```
 > Then `npm test` will work too.
 
-## Roadmap / Ideas
 
-- [ ] Add more threat-intel sources (e.g., PhishTank, URLScan.io) for stronger consensus scoring.
-- [ ] Cache recent scan results to reduce redundant API calls.
-- [ ] Add a detailed breakdown view in the popup (show per-source signals, not just the final verdict).
-- [ ] Publish to the Chrome Web Store.
-- [ ] Add rate-limiting/error handling for API quota limits.
-
-## Contributing
-
-Contributions, issues, and feature requests are welcome. Feel free to fork the repo and open a pull request.
-
-## License
 
 No license file is currently specified in this repository. Consider adding one (e.g., MIT) if you plan to share or accept contributions.
