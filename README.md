@@ -137,5 +137,3 @@ By default the server should now be running at `http://localhost:3000`.
 4. Select the `extension/` folder from this repo.
 5. The Phishy-Check icon should now appear in your Chrome toolbar.
 6. If the extension needs the backend URL configured, make sure it points to `http://localhost:3000` (or wherever you're hosting the server) — check the extension's config/constants file.
-
-No license file is currently specified in this repository. Consider adding one (e.g., MIT) if you plan to share or accept contributions.
