@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Phishy URL Detector",
+  "version": "2.0.0",
+  "description": "Detect potentially malicious and phishing URLs.",
+
+  "permissions": [
+    "tabs",
+    "storage",
+    "notifications"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

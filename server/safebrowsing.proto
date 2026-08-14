@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package google.security.safebrowsing.v5;
+
+message SearchUrlsResponse {
+    repeated ThreatUrl threats = 1;
+    Duration cache_duration = 2;
+}
+
+message ThreatUrl {
+    string url = 1;
+    repeated ThreatType threat_types = 2;
+}
+
+enum ThreatType {
+    THREAT_TYPE_UNSPECIFIED = 0;
+    MALWARE = 1;
+    SOCIAL_ENGINEERING = 2;
+    UNWANTED_SOFTWARE = 3;
+    POTENTIALLY_HARMFUL_APPLICATION = 4;
+}
+
+message Duration {
+    int64 seconds = 1;
+    int32 nanos = 2;
+}
