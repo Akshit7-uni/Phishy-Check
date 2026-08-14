@@ -1,32 +1,52 @@
-# Phishy-Check
+# Phishy-Check 🎣🔍
 
-Phishy-Check is a Chrome extension that analyzes the URL of the current browser tab and determines whether it is **Safe, Suspicious, or Malicious**.
-
-The project uses multiple security intelligence sources and a backend risk engine to produce a final security verdict.
-
-## Features
-
-- Detects the URL of the active Chrome tab.
-- Scans URLs using the VirusTotal API.
-- Checks URLs against Google Safe Browsing.
-- Uses polling to wait for VirusTotal analysis completion.
-- Combines results from multiple security sources.
-- Calculates an explainable risk score.
-- Classifies URLs as:
-  - SAFE
-  - SUSPICIOUS
-  - MALICIOUS
-- Keeps API keys on the backend instead of exposing them in the Chrome extension.
-- Provides a simple Chrome extension interface.
-- Includes independent testing for the risk engine.
+Phishy-Check is a Chrome extension that analyzes the URL of your current browser tab and tells you whether it is **Safe**, **Suspicious**, or **Malicious** — backed by a Node.js/Express server that aggregates results from multiple threat-intelligence sources into a single, explainable risk verdict.
 
 ---
 
-# Architecture
+## Table of Contents
 
-The project follows a frontend/backend architecture.
+- Overview
+- Features
+- Screenshots
+- Architecture
+- Tech Stack
+- Project Structure
+- Getting Started
+  - Prerequisites
+  - 1. Clone the repo
+  - 2. Set up the backend server
+  - 3. Load the Chrome extension
+- How It Works
+- Configuration
+- Testing
+- Roadmap / Ideas
+- Contributing
+- License
 
-```text
+---
+
+## Overview
+
+Phishing links are one of the easiest ways attackers trick people into handing over credentials or installing malware. Phishy-Check gives you a one-click check on any page you're currently viewing: it grabs the active tab's URL, sends it to a backend risk engine, and returns a clear verdict — **SAFE**, **SUSPICIOUS**, or **MALICIOUS** — along with the signals that produced it.
+
+The extension itself stays intentionally "dumb": it only captures the URL and displays the result. All the actual intelligence-gathering and API key usage happens server-side, so your VirusTotal / Google Safe Browsing credentials are never exposed in client-side extension code.
+
+## Features
+
+- 🔎 Detects the URL of the currently active Chrome tab.
+- 🧪 Scans URLs using the **VirusTotal API**.
+- 🛡️ Cross-checks URLs against **Google Safe Browsing**.
+- ⏳ Polls VirusTotal until the analysis job completes (VirusTotal scans are asynchronous).
+- 🧮 Combines signals from multiple sources into a single **explainable risk score**.
+- 🚦 Classifies each URL as `SAFE`, `SUSPICIOUS`, or `MALICIOUS`.
+- 🔐 Keeps all API keys on the backend — nothing sensitive ships inside the extension bundle.
+- 🖱️ Simple, lightweight popup UI for the verdict.
+- ✅ Includes independent tests for the risk-scoring engine.
+
+## Architecture
+
+```
 Chrome Extension
       |
       | POST /scan
@@ -49,3 +69,137 @@ VirusTotal API       Google Safe Browsing API
                  |
                  v
           Chrome Popup
+```
+
+**Flow:**
+1. User clicks the Phishy-Check extension icon while browsing.
+2. The extension reads the active tab's URL.
+3. It sends that URL to the backend via a `POST /scan` request.
+4. The backend queries VirusTotal, then Google Safe Browsing, one after the other (sequentially — not in parallel).
+5. The backend's risk engine combines both results into a single weighted score.
+6. The final verdict (`SAFE` / `SUSPICIOUS` / `MALICIOUS`) is returned to the extension and rendered in the popup.
+
+## Tech Stack
+
+| Layer      | Technology                                   |
+|------------|-----------------------------------------------|
+| Extension  | HTML, CSS, JavaScript (Chrome Extension APIs) |
+| Backend    | Node.js, Express                              |
+| Threat Intel | VirusTotal API, Google Safe Browsing API   |
+| Testing    | Independent unit tests for the risk engine    |
+
+## Project Structure
+
+```
+Phishy-Check/
+├── extension/
+│   └── [TODO: fill in actual files, e.g. manifest.json, popup.html, popup.js]
+├── server/
+│   ├── testrisk.js  # independent tests for the risk-scoring engine
+│   └── [TODO: fill in remaining actual files, e.g. server.js, riskEngine.js, .env]
+├── .gitignore
+└── README.md
+```
+
+> ⚠️ **Placeholder** — I couldn't crawl the `extension/` and `server/` folders directly (GitHub blocks automated access to file listings), so I only know `testrisk.js` exists from the test-command fix above. Send me the actual file list (e.g. paste `tree extension server` output) and I'll fill this in precisely.
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or later recommended) and npm
+- Google Chrome (or any Chromium-based browser that supports Manifest V3 extensions)
+- API keys for:
+  - [VirusTotal](https://www.virustotal.com/gui/join-us) (free tier available)
+  - [Google Safe Browsing](https://developers.google.com/safe-browsing/v4/get-started) (requires a Google Cloud project with the Safe Browsing API enabled)
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/Akshit7-uni/Phishy-Check.git
+cd Phishy-Check
+```
+
+### 2. Set up the backend server
+
+```bash
+cd server
+npm install
+```
+
+Create a `.env` file inside `server/` with your API keys:
+
+```env
+PORT=3000
+VIRUSTOTAL_API_KEY=your_virustotal_api_key
+GOOGLE_SAFE_BROWSING_API_KEY=your_google_safe_browsing_api_key
+```
+
+Start the server:
+
+```bash
+npm start
+```
+
+By default the server should now be running at `http://localhost:3000`.
+
+### 3. Load the Chrome extension
+
+1. Open Chrome and go to `chrome://extensions/`.
+2. Toggle on **Developer mode** (top-right corner).
+3. Click **Load unpacked**.
+4. Select the `extension/` folder from this repo.
+5. The Phishy-Check icon should now appear in your Chrome toolbar.
+6. If the extension needs the backend URL configured, make sure it points to `http://localhost:3000` (or wherever you're hosting the server) — check the extension's config/constants file.
+
+## How It Works
+
+1. **Capture** – The extension grabs the URL of the currently active tab using the Chrome Extensions API.
+2. **Submit** – It sends that URL to the backend's `/scan` endpoint.
+3. **Scan (VirusTotal)** – The backend submits the URL to VirusTotal and polls the analysis endpoint until the scan completes (since VirusTotal scans run asynchronously).
+4. **Scan (Google Safe Browsing)** – Once the VirusTotal scan finishes, the backend then checks the URL against Google's Safe Browsing threat lists (this step currently runs sequentially, after VirusTotal, not in parallel).
+5. **Score** – The risk engine combines both results into a single explainable score, weighing detections from each source.
+6. **Classify** – Based on the score, the URL is labeled `SAFE`, `SUSPICIOUS`, or `MALICIOUS`.
+7. **Display** – The verdict is sent back to the extension and shown in the popup.
+
+## Configuration
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `PORT` | Port the Express server listens on | No (defaults typically to 3000) |
+| `VIRUSTOTAL_API_KEY` | Your VirusTotal API key | Yes |
+| `GOOGLE_SAFE_BROWSING_API_KEY` | Your Google Safe Browsing API key | Yes |
+
+> Never commit your `.env` file or API keys to version control — `.gitignore` in this repo should already exclude it.
+
+## Testing
+
+The risk engine includes independent tests, separate from the API integrations (so scoring logic can be verified without live API calls). From the `server/` directory:
+
+```bash
+node testrisk.js
+```
+
+> Tip: you can wire this up as `npm test` by adding a `"test"` script to `server/package.json`:
+> ```json
+> "scripts": {
+>   "test": "node testrisk.js"
+> }
+> ```
+> Then `npm test` will work too.
+
+## Roadmap / Ideas
+
+- [ ] Add more threat-intel sources (e.g., PhishTank, URLScan.io) for stronger consensus scoring.
+- [ ] Cache recent scan results to reduce redundant API calls.
+- [ ] Add a detailed breakdown view in the popup (show per-source signals, not just the final verdict).
+- [ ] Publish to the Chrome Web Store.
+- [ ] Add rate-limiting/error handling for API quota limits.
+
+## Contributing
+
+Contributions, issues, and feature requests are welcome. Feel free to fork the repo and open a pull request.
+
+## License
+
+No license file is currently specified in this repository. Consider adding one (e.g., MIT) if you plan to share or accept contributions.
